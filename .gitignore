@@ -1,7 +1,13 @@
 *.iml
 .idea/
 target/
-
+build-docs-html/
+build-docs-pdf/
+build-docs-revealjs/
+asciidocs/revealjs/
+revealjs.zip
+gh-pages/
+.env
 
 ### macOS ###
 # General
