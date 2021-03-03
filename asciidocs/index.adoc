@@ -1,6 +1,6 @@
 = Security mit SSH
 Thomas W. Stütz, credits to Mr. Christian Aberger
-1.0.0, 2021-03-03: How to use ssh in project work @ HTL Leonding college
+1.0.1, 2021-03-03: How to use ssh in project work @ HTL Leonding college
 ifndef::imagesdir[:imagesdir: images]
 //:toc-placement!:  // prevents the generation of the doc at this position, so it can be printed afterwards
 :sourcedir: ../src/main/java
@@ -17,7 +17,7 @@ ifdef::backend-html5[]
 // https://fontawesome.com/v4.7.0/icons/
 icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/security-lecture-notes/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
 icon:github-square[link=https://github.com/htl-leonding-college/security-lecture-notes] ‏ ‏ ‎
-icon:home[link=https://htl-leonding.github.io/security-lecture-notes/]
+icon:home[link=http://edufs.edu.htl-leonding.ac.at/~t.stuetz/hugo/]
 endif::backend-html5[]
 
 // print the toc here (not at the default position)
