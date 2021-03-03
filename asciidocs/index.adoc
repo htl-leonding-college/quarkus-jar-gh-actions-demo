@@ -109,7 +109,7 @@ ssh dev rm /xx/yy/a.txt
 ----
 
 
-== Installieren your keys in FileZilla
+== Install your keys in FileZilla
 
 image:ssh-in-filezilla.png[]
 
