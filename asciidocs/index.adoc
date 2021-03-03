@@ -15,9 +15,9 @@ ifndef::imagesdir[:imagesdir: images]
 ifdef::backend-html5[]
 
 // https://fontawesome.com/v4.7.0/icons/
-icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/asciidoctor-docker-template/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
-icon:github-square[link=https://github.com/htl-leonding-college/asciidoctor-docker-template] ‏ ‏ ‎
-icon:home[link=https://htl-leonding.github.io/]
+icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/security-lecture-notes/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
+icon:github-square[link=https://github.com/htl-leonding-college/security-lecture-notes] ‏ ‏ ‎
+icon:home[link=https://htl-leonding.github.io/security-lecture-notes/]
 endif::backend-html5[]
 
 // print the toc here (not at the default position)
