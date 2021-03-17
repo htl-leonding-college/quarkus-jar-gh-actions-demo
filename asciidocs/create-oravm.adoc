@@ -24,7 +24,7 @@ We have to use a ssh.key-pair. The public key must be transferred into the .ssh-
 ----
 @startuml
 left to right direction
-node "local pc" as localpc {
+node "local machine" as localpc {
   folder ".ssh" as sshlocal {
     file htl_key
     file htl_key.pub
@@ -37,7 +37,7 @@ node oravm <<Virtual Machine>> {
   }
 }
 
-localpc --- oravm: ssh-session >
+sshlocal ---> sshremote: ssh-session
 @enduml
 ----
 
