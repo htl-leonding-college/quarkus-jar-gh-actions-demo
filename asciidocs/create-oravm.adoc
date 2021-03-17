@@ -54,6 +54,7 @@ We create an own key pair for our work in HTL Leonding college
 * htl_key.pub
 
 .Command for generating the ssh key pair
+[source,bash]
 ----
 ssh-keygen -t rsa
 ----
@@ -85,8 +86,8 @@ The key's randomart image is:
 == Create an Oracle VM Instance in Oracle Cloud
 
 .Click here for detailed installation instructions
-//[%collapsible]
-[%collapsible%open]
+[%collapsible]
+//[%collapsible%open]
 ====
 
 .Login into Oracle Cloud
@@ -163,11 +164,13 @@ chmod go-rw ssh-key.key.pub
 ----
 ////
 
+
 ----
 ssh <username of remote server>@<ip-address-from-oravm>
 ----
 
 .Example
+[source,bash]
 ----
 ssh ubuntu@oravm
 ----
@@ -250,12 +253,13 @@ There are different options:
 We choose https://adoptopenjdk.net/installation.html?variant=openjdk15&jvmVariant=hotspot#x64_linux-jdk[adoptopenjdk]:
 
 .First login
-[source,shell]
+[source,bash]
 ----
 ssh oravm
 ----
 
 .add the package manager sources for adoptopenjdk and install the jdk (you can copy-paste this paragraph)
+[source,bash]
 ----
 # install missing dependencies
 sudo apt -y install wget apt-transport-https gnupg
