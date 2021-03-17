@@ -15,8 +15,8 @@ ifndef::imagesdir[:imagesdir: images]
 ifdef::backend-html5[]
 
 // https://fontawesome.com/v4.7.0/icons/
-icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/quarkus-jar-actions-demo/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
-icon:github-square[link=https://github.com/htl-leonding-college/quarkus-jar-actions-demo] ‏ ‏ ‎
+icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/security-lecture-notes/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
+icon:github-square[link=https://github.com/htl-leonding-college/security-lecture-notes] ‏ ‏ ‎
 icon:home[link=http://edufs.edu.htl-leonding.ac.at/~t.stuetz/hugo/]
 endif::backend-html5[]
 
@@ -133,33 +133,3 @@ Hello RESTEasy
 ----
 
 
-////
-* Tests entfernen
-* laufen lassen
-
-* CI
-* CD ... continous delivery ... ausliefern
-
-
-
-== Generieren eines lokalen keys
-
-== Am remote Server einloggen
-
-.öffnen einer shell mit root-rechten
-----
-sudo su -
-----
-
-.den aktuellen User zu den root-Usern hinzufügen
-----
-sudo usermod -aG sudo $USER
-----
-
-
-einen Schlüssel generieren
-----
-ssh-keygen -t rsa -b 4096
-----
-
-////

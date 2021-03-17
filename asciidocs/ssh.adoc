@@ -1,4 +1,4 @@
-= Security mit SSH
+= Security mit SSH (work-in-progress)
 Thomas W. Stütz, credits to Mr. Christian Aberger
 1.0.1, 2021-03-03: How to use ssh in project work @ HTL Leonding college
 ifndef::imagesdir[:imagesdir: images]
@@ -15,8 +15,8 @@ ifndef::imagesdir[:imagesdir: images]
 ifdef::backend-html5[]
 
 // https://fontawesome.com/v4.7.0/icons/
-icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/quarkus-jar-actions-demo/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
-icon:github-square[link=https://github.com/htl-leonding-college/quarkus-jar-actions-demo] ‏ ‏ ‎
+icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/security-lecture-notes/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
+icon:github-square[link=https://github.com/htl-leonding-college/security-lecture-notes] ‏ ‏ ‎
 icon:home[link=http://edufs.edu.htl-leonding.ac.at/~t.stuetz/hugo/]
 endif::backend-html5[]
 
@@ -123,6 +123,22 @@ ssh dev rm /xx/yy/a.txt
 cat authorized_keys
 ----
 
+////
+== Am remote Server einloggen
+
+.öffnen einer shell mit root-rechten
+----
+sudo su -
+----
+
+.den aktuellen User zu den root-Usern hinzufügen
+----
+sudo usermod -aG sudo $USER
+----
+
+////
+
+
 == Install your keys in FileZilla
 
 image:ssh-in-filezilla.png[]
@@ -182,7 +198,7 @@ drwxr-xr-x+ 98 stuetz  staff   3.1K Feb 18 11:25 ..
 -rw-r--r--   1 stuetz  staff   6.2K Feb 16 08:25 known_hosts
 ----
 
-=== Add the private key to yout github-repo
+=== Add the private key to your github-repo
 
 * So your github-actions-pipeline can deploy to the remote server.
 * Click the button kbd:[New repository secret]
