@@ -1,0 +1,59 @@
+= github - refuse Workflow
+Thomas W. Stütz
+1.0.0, 2021-03-17: How to use ssh in project work @ HTL Leonding college
+ifndef::imagesdir[:imagesdir: images]
+//:toc-placement!:  // prevents the generation of the doc at this position, so it can be printed afterwards
+:sourcedir: ../src/main/java
+:icons: font
+:sectnums:    // Nummerierung der Überschriften / section numbering
+//:toc: left
+:notoc:
+:toclevels: 5
+:experimental: true
+:linkattrs:   // so window="_blank" will be executed
+
+//Need this blank line after ifdef, don't know why...
+ifdef::backend-html5[]
+
+// https://fontawesome.com/v4.7.0/icons/
+icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/quarkus-jar-actions-demo/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
+icon:github-square[link=https://github.com/htl-leonding-college/quarkus-jar-actions-demo] ‏ ‏ ‎
+icon:home[link=http://edufs.edu.htl-leonding.ac.at/~t.stuetz/hugo/]
+endif::backend-html5[]
+
+// print the toc here (not at the default position)
+//toc::[]
+
+== Problem: refusing to allow an OAuth App to create or update workflow
+
+* When pushing to github an error orccurs
+
+----
+error: failed to push some refs to 'https://github.com/htl-leonding/xxx.git'
+To https://github.com/htl-leonding/xxx.git
+!	refs/heads/master:refs/heads/master	[remote rejected] (refusing to allow an OAuth App to create or update workflow `.github/workflows/ci.yml` without `workflow` scope)
+Done
+----
+
+== For IntelliJ
+
+. In your Github account, go to *Settings* (in your avatar dropdown in the top right-hand corner)
+. Go to *Developer Settings* > *Personal Access Tokens*
+. If your application is listed, click on its name to edit the settings associated with its OAuth token. Make sure workflow is ticked.
+. Click on Update Token to save the change.
+. On the same page, click on Generate Token. Read the information carefully, then click OK to continue.
+. Copy the new token that Github shows you.
+. You will need to recreate your application's integration with Github using the new token for the change to take effect.
+
+In IntelliJ, the last step was to go to Settings > Version Control > GitHub, then remove the existing integration and re-add it, pasting in the new token. You'll have to find out what needs to be done for the tool you're using to give it the new GitHub OAuth token.
+
+https://stackoverflow.com/a/64080046[stackoverflow]
+
+== For Windows 10
+
+Go to Settings -> Credentials Manager -> Windows Credentials -> Remove github.com credentials -> git pull/push your github project from git-bash console -> Reconnect GitHub Account in your IDE/Source control. You don't need create Personal Access Token with "workflow", you don';t need create secret GITHUB_TOKEN (it creates auto and can't created manual)
+
+https://stackoverflow.com/a/64352809[stackoverflow]
+
+
+
