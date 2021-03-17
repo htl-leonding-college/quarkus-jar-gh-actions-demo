@@ -29,7 +29,9 @@ Credits to Mr. Christian Aberger - this notes are based on his lecture @ HTL Leo
 
 == Create a Quarkus-App at quarkus.io
 
+* browse to https://quarkus.io/
 
+* click on kbd:[START CODING]
 
 .Create a repo and push to gh. The first time, you have to approve the push to github.
 image:quarkus-001.png[width=80%]
