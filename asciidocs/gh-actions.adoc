@@ -29,88 +29,319 @@ Credits to Mr. Christian Aberger - this notes are based on his lecture @ HTL Leo
 
 == Overview - What we will do
 
-.Create a Quarkus app providing a simple restful endpoint.
-.This app will be pushed automatically to github
-
-== Create a Quarkus-App
-
-.Create a repo and push to gh. The first time, you have to approve the push to github.
-image:quarkus-001.png[width=80%]
-
-.Clone the repo to your local machine
-image:quarkus-002.png[width=50%]
-
-[source,bash]
+.continous-deployment pipeline @ HTL Leonding
+[plantuml, align=left]
 ----
-git clone https://github.com/htl-leonding/gh-actions-demo.git
+include::plantuml/pipeline.puml[]
 ----
 
-=== Run Quarkus App
+== Create ssh-key-pair
+
+.when asked, name the file `github_key`
+----
+# log in @ remote server
+ssh oravm
+cd .ssh
+ssh-keygen -t rsa
+----
+
+.result
+----
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/ubuntu/.ssh/id_rsa): github_key
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in github_key
+Your public key has been saved in github_key.pub
+The key fingerprint is:
+SHA256:MftyaebNas9z9hSiED2GeJcUDD8IUbhRytRGJTkldJk ubuntu@instance-20210316-1435
+The key's randomart image is:
++---[RSA 3072]----+
+|        .O%==o   |
+|       .+==OE    |
+|      . *+B=.    |
+|       ..B.oo    |
+|        S   ...  |
+|         o o . . |
+|        . B   .  |
+|         *.++.   |
+|         .o+=+.  |
++----[SHA256]-----+
+----
+
+.ls -l
+----
+ubuntu@instance-20210316-1435:~/.ssh$ ls -l
+total 12
+-rw------- 1 ubuntu ubuntu  580 Mar 16 13:37 authorized_keys
+-rw------- 1 ubuntu ubuntu 2622 Mar 17 10:41 github_key
+-rw-r--r-- 1 ubuntu ubuntu  583 Mar 17 10:41 github_key.pub
+----
+
+== Add the public key to authorized_keys
 
 ----
-./mvnw clean compile quarkus:dev
+cat ~/.ssh/github_key.pub >> ~/.ssh/authorized_keys
+----
+
+.check, if successfull
+----
+cat ~/.ssh/authorized_keys
+----
+
+.result (looks good)
+----
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCubid/1JXXwvLZvrq7nZJ/qkGqG0lIShEhmazwOmNk5WWUJ9hIO1oScbcxxrxAPKeWvngE2P0RvMs8FdWZwKzph2Om0/XTHb/oldm+4griKDkVdy0zuv5wOvyGaNef9e3XbxK5dBvR1HA4ZoGEQAMXyIf4BtRjV725xzoZMIolk= stuetz@Toms-MBP-2020.local
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDxERIDOGyZeg9YUb2Xd7fir2xDd73zZnvdq0THqxcOExp6zsRhEjsvJD3l89wwc7ySfgCn/3BKy6vvP8Ommc9i3U2Of6XuiyfOn0i8POE2Dy8TUSm3utjphof7BTagko8+sb1YXPUPj2wUBGICVSgnEy5B4WdvG4HlLLJ+LEWgz0= ubuntu@instance-20210316-1435
+----
+
+== Status Quo
+
+.When you generated your Quarkus App at quarkus.io and pushed it to github, your project should look like:
+image:quarkus-project-ciyml.png[]
+
+* There is already created a ci.yml - file
+
+* For further infomation -> https://docs.github.com/en/actions[Github Actions]
+
+* Next steps are:
+** create a ssh-key-pair on the remote server for github
+** create a secret in the gh-repo, so the remote server can be accessed by the gh-build-server
+** write the pipeline-script (.yml)
+
+
+== Create a Secret in the gh-repo
+
+=== Copy the key-pair to your Local Machine
+
+
+.copy the private key to your home-dir at your local machine
+----
+scp oravm:.ssh/github_key ~
+----
+
+.result
+----
+github_key                               100% 2622    47.6KB/s   00:00
+----
+
+.copy the public key to your home-dir at your local machine
+----
+scp oravm:.ssh/github_key.pub ~
+----
+
+.result
+----
+github_key.pub                          100%  583     9.5KB/s   00:00
+----
+
+.ls -lh
+----
+-rw-------    1 stuetz  staff   2.6K Mar 17 11:47 github_key
+-rw-r--r--    1 stuetz  staff   583B Mar 17 11:47 github_key.pub
+----
+
+Further informations: https://linuxize.com/post/how-to-use-scp-command-to-securely-transfer-files/[How to Use SCP Command to Securely Transfer Files]
+
+=== Create a Secret in the gh Repo
+
+image:gh-secret.png[width=80%]
+
+
+
+=== Open the Private Key in an Editor
+
+----
+gedit github_key
+----
+
+image:gh-secret1.png[width=80%]
+
+-copy-paste the WHOLE private key into the input field and click kbd:[Add secret]
+image:gh-secret2.png[width=80%]
+
+.create also a secret for user and ip
+image:gh-secret3.png[]
+
+
+
+== Commit, Push and Run the Script
+
+image:gh-actions-001.png[]
+
+* There is also a button kbd:[Re-run jobs], so you don't have to push, to run the script.
+* Now we have to complete the .yml-file
+
+
+== Structure of the Pipeline .yaml-File
+
+=== Trigger to Start the gh-action-script
+
+[source,yaml]
+----
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+----
+
+* After a push or an accepted pull request, the script will be started.
+
+
+=== Select the os of the vm
+
+[source,yaml]
+----
+jobs:
+  build:
+    runs-on: ubuntu-latest
+----
+
+=== Checkout the Source from git-Repo
+
+[source,yaml]
+----
+    steps:
+      - uses: actions/checkout@v2
+
+----
+
+=== Install JDK11
+
+[source,yaml]
+----
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+----
+
+* You can choose, which version you install
+* For compatibility reasons you could also install https://github.com/marketplace/actions/setup-java-using-binaries-from-adoptopenjdk[adoptopenjdk]
+
+
+
+
+
+=== Build the jar File
+
+[source,yaml]
+----
+      - name: Build
+        run: ./mvnw clean package -Dquarkus.package.type=uber-jar -B
+----
+
+* -B ... batch mode
+
+
+=== Install ssh-key into .ssh-Folder
+
+[source,yaml]
+----
+      - name: install ssh key
+        uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: ${{ secrets.ORAVM }}  # <.>
+----
+
+<.> Here you have to input the created secret ORAVM
+
+=== Make an Entry into known_hosts
+
+[source,yaml]
+----
+      - name: create .ssh/known_hosts
+        run: ssh-keyscan -H -t rsa -v ${{ secrets.ORAVM_IP }}  >> ~/.ssh/known_hosts
+----
+
+=== Copy The Binaries to the Remote Server
+
+[source,yaml]
+----
+      - name: copy binaries to oravm
+        run: |  # <.>
+          ls -l target/
+          scp target/actions-demo-1.0.0-SNAPSHOT-runner.jar ${{ secrets.ORAVM_USER }}@${{ secrets.ORAVM_IP }}:
+
+----
+
+<.> the pipe-symbol "|" is needed for multiline-commands
+
+== Commit, Push and Run the Script
+
+image:gh-actions-002.png[]
+
+.check the success on the vm
+----
+ls -lah
+----
+
+.result
+----
+total 11M
+-rw-r--r-- 1 ubuntu ubuntu  11M Mar 17 11:52 gh-actions-demo-1.0.0-SNAPSHOT-runner.jar
+-rw------- 1 ubuntu ubuntu 2.6K Mar 16 13:52 github_key
+-rw-r--r-- 1 ubuntu ubuntu  583 Mar 16 13:52 github_key.pub
+----
+
+----
+java -jar gh-actions-demo-1.0.0-SNAPSHOT-runner.jar
 ----
 
 ----
 curl localhost:8080/hello-resteasy
 ----
 
-.result
+== Open the firewall for accessing your Endpoint
+
+Source: https://stackoverflow.com/a/58284110[stackoverflow]
+
+
+=== Log into the VM using SSH and run the following command
 ----
-Hello RESTEasy
-----
-
-=== Change Quarkus Package Type
-
-* quarkus.package.type=uber-jar
-** `fast-jar` (default)
-** `legacy-jar` for the pre-1.12 default jar packaging,
-** `uber-jar`
-** `native`
-
-
-.application.properties (https://quarkus.io/guides/all-config[more information])
-----
-quarkus.package.type=uber-jar
+sudo iptables --list --line-numbers
 ----
 
-----
-./mvnw clean package -B
-----
+It will show the details about Chain INPUT (policy ACCEPT). From the list required to Delete REJECT all rule in the IPTABLES.
 
-.a -runner - jar is created
 ----
--rw-r--r--   1 stuetz  staff    10M Mar 13 19:17 gh-actions-demo-1.0.0-SNAPSHOT-runner.jar
--rw-r--r--   1 stuetz  staff   4.7K Mar 13 19:17 gh-actions-demo-1.0.0-SNAPSHOT.jar.original
+$ sudo iptables -D INPUT <Reject Line number>
+e.g.
+$ sudo iptables -D INPUT 6
 ----
 
-* Tests entfernen
-* laufen lassen
+* " `sudo iptables -D INPUT 6` " should work
 
-* CI
-* CD ... continous delivery ... ausliefern
+=== Check if the REJECT rule is deleted
 
-////
-
-
-== Generieren eines lokalen keys
-
-== Am remote Server einloggen
-
-.öffnen einer shell mit root-rechten
 ----
-sudo su -
-----
-
-.den aktuellen User zu den root-Usern hinzufügen
-----
-sudo usermod -aG sudo $USER
+sudo iptables --list --line-numbers
 ----
 
 
-einen Schlüssel generieren
+=== Access your Endpoint
+
+.Start the App
 ----
-ssh-keygen -t rsa -b 4096
+java -jar ./gh-actions-demo-1.0.0-SNAPSHOT-runner.jar
 ----
 
-////
+.From a terminal at your local machine
+----
+curl http://130.61.185.104:8080/hello-resteasy
+----
+
+.Result
+----
+Hello RESTEasy%
+----
+
+== TODO: Create a Service for Starting the App Automatically
+
+
+
+
+
+
+
