@@ -1,0 +1,323 @@
+= Create and Configure a Oracle VM Instance in the Oracle Cloud
+Thomas W. Stütz
+1.0.1, 2021-03-13: create a vm
+
+ifndef::imagesdir[:imagesdir: images]
+//:toc-placement!:  // prevents the generation of the doc at this position, so it can be printed afterwards
+:sourcedir: ../src/main/java
+:icons: font
+:sectnums:    // Nummerierung der Überschriften / section numbering
+:toc: left
+:toclevels: 5
+:experimental: true
+:linkattrs:   // so window="_blank" will be executed
+
+== What to do?
+
+* First we create an https://www.oracle.com/cloud/free/[Oracle VM instance]
+* Afterwards we will login into the Oracle VM instance (called `oravm`)
+per ssh-session w/o using username and password.
+
+We have to use a ssh.key-pair. The public key must be transferred into the .ssh-folder on the remote server.
+
+[plantuml,ssh-overview,png]
+----
+@startuml
+left to right direction
+node "local pc" as localpc {
+  folder ".ssh" as sshlocal {
+    file htl_key
+    file htl_key.pub
+  }
+}
+
+node oravm <<Virtual Machine>> {
+  folder ".ssh" as sshremote {
+    file "htl_key.pub" as remotepub
+  }
+}
+
+localpc --- oravm: ssh-session >
+@enduml
+----
+
+. create local ssh-key-pair
+. create an Oracle VM instance (`oravm`)
+. create a config-file in .ssh
+. login into VM instance
+
+== Create a local ssh - key pair for HTL Leonding
+
+We create an own key pair for our work in HTL Leonding college
+
+* htl_key
+* htl_key.pub
+
+.Command for generating the ssh key pair
+----
+ssh-keygen -t rsa
+----
+
+.We have to give a name to the key pair -> htl_key
+----
+Generating public/private rsa key pair.
+Enter file in which to save the key (/Users/stuetz/.ssh/id_rsa): htl_key
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in htl_key.
+Your public key has been saved in htl_key.pub.
+The key fingerprint is:
+SHA256:GX4Zz1fdg53dwj335964Yl1hqK6RWP6pDb5hzmj3jos stuetz@Toms-MBP-2020.local
+The key's randomart image is:
++---[RSA 3072]----+
+|              . o|
+|               o.|
+|        . .  .. .|
+|       . o = .o .|
+|        S o = ooo|
+|       . .o. O +*|
+|      o o+..B =o+|
+|     . oo=.oo*  +|
+|      E.===oo..o=|
++----[SHA256]-----+
+----
+
+== Create an Oracle VM Instance in Oracle Cloud
+
+.Click here for detailed installation instructions
+//[%collapsible]
+[%collapsible%open]
+====
+
+.Login into Oracle Cloud
+image:oracle-cloud-001.png[width=50%]
+
+
+image:oracle-cloud-002.png[width=50%]
+
+image:oracle-cloud-003.png[width=50%]
+
+.Choose "Create a VM Instance"
+image:oracle-cloud-004.png[width=80%]
+
+.Edit "Placement and hardware"
+image:oracle-cloud-005.png[width=80%]
+
+.Change Image
+image:oracle-cloud-005a.png[width=80%]
+
+.Choose Ubuntu Minimal
+image:oracle-cloud-006.png[width=80%]
+
+.Upload the public key from your local .ssh-folder
+image:oracle-cloud-007.png[width=80%]
+
+.Upload the public key of the formerly created key pair and click the kbd:[Create] - button
+image:oracle-cloud-007a.png[width=80%]
+====
+
+.Wait a couple of minutes until the status becomes RUNNING
+image:oracle-cloud-008.png[width=80%]
+
+
+
+=== Create a local ssh-`config`-File
+
+. change dir to .ssh in your home directory
++
+----
+cd ~/.ssh
+----
+
+. open an editor to create a file `config`
++
+----
+nano config
+----
+
+. configure the ssh-access to oravm
++
+----
+Host <choose a name for your remote server>
+     Hostname <public ip-address from oravm>
+     User <user of the remote server>
+     IdentityFile <local private key>
+----
++
+.Example
+----
+Host oravm
+     Hostname 130.61.185.123
+     User ubuntu
+     IdentityFile ~/.ssh/htl_key
+----
+
+
+== Login First Time
+
+////
+.Setzen der Rechte
+----
+chmod go-rw ssh-key.key
+chmod go-rw ssh-key.key.pub
+----
+////
+
+----
+ssh <username of remote server>@<ip-address-from-oravm>
+----
+
+.Example
+----
+ssh ubuntu@oravm
+----
+
+.Result
+----
+Welcome to Ubuntu 20.04.2 LTS (GNU/Linux 5.4.0-1037-oracle x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+ * Introducing self-healing high availability clusters in MicroK8s.
+   Simple, hardened, Kubernetes for production, from RaspberryPi to DC.
+
+     https://microk8s.io/high-availability
+
+This system has been minimized by removing packages and content that are
+not required on a system that users do not log into.
+
+To restore this content, you can run the 'unminimize' command.
+
+0 updates can be installed immediately.
+0 of these updates are security updates.
+
+Last login: Tue Mar 16 13:44:59 2021 from 193.170.159.99
+ubuntu@instance-20210316-1435:~$
+----
+
+[TIP]
+====
+* to use one command as root: `sudo <command>`
+* to login as root-user: `sudo -i`
+* to update your systen:
++
+----
+sudo apt update && sudo apt -y dist-upgrade
+sudo apt autoremove
+----
+====
+
+
+////
+== Kopieren des eigenen private keys auf oravm
+
+----
+
+----
+
+mkdir github-keys
+erstellen eines keys sin github-keys
+cat id_rsa.ssh >> .ssh/authorized_files
+cat ~/github-keys/id_rsa.key.pub ./ssh/authorized_keys
+
+ins github den private github-key eintragen
+
+=== Erstellen eine key-paars auf der oravm
+
+////
+
+
+== Verbindung in Filezilla einrichten
+
+* Filezilla:
+
+.you have to use the private key
+image:ssh-in-filezilla-002.png[]
+
+
+
+== Install JDK
+
+There are different options:
+
+* openjdk
+* Oracle JDK
+* adoptopenjdk
+* ...
+
+We choose https://adoptopenjdk.net/installation.html?variant=openjdk15&jvmVariant=hotspot#x64_linux-jdk[adoptopenjdk]:
+
+.First login
+[source,shell]
+----
+ssh oravm
+----
+
+.add the package manager sources for adoptopenjdk and install the jdk (you can copy-paste this paragraph)
+----
+# install missing dependencies
+sudo apt -y install wget apt-transport-https gnupg
+
+# install the gpg key
+wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
+
+# make an entry in the package manager sources - file
+echo "deb https://adoptopenjdk.jfrog.io/adoptopenjdk/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/adoptopenjdk.list
+
+# update the package lists to get the adoptopenjdk packages entries
+sudo apt-get update
+
+# install the jdk
+sudo apt -y install adoptopenjdk-15-hotspot
+
+# now check the java version
+java -version
+
+# now check the java-compiler version
+javac -version
+
+----
+
+
+== Install Docker
+
+https://docs.docker.com/engine/install/ubuntu/
+
+[source,bash]
+----
+sudo apt-get update
+
+sudo apt -y install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+echo \
+  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update
+
+sudo apt -y install docker-ce docker-ce-cli containerd.io
+----
+
+
+== Install docker-compose
+
+check here for the latest version:
+https://docs.docker.com/compose/install/
+
+[source,bash]
+----
+sudo curl -L "https://github.com/docker/compose/releases/download/1.28.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+sudo chmod +x /usr/local/bin/docker-compose
+
+docker-compose --version
+----
