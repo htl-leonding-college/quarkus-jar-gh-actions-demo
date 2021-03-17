@@ -1,0 +1,116 @@
+= github actions
+Thomas W. Stütz, credits to Mr. Christian Aberger
+1.0.1, 2021-03-03: How to use ssh in project work @ HTL Leonding college
+ifndef::imagesdir[:imagesdir: images]
+//:toc-placement!:  // prevents the generation of the doc at this position, so it can be printed afterwards
+:sourcedir: ../src/main/java
+:icons: font
+:sectnums:    // Nummerierung der Überschriften / section numbering
+:toc: left
+:toclevels: 5
+:experimental: true
+:linkattrs:   // so window="_blank" will be executed
+
+//Need this blank line after ifdef, don't know why...
+ifdef::backend-html5[]
+
+// https://fontawesome.com/v4.7.0/icons/
+icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/security-lecture-notes/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
+icon:github-square[link=https://github.com/htl-leonding-college/security-lecture-notes] ‏ ‏ ‎
+icon:home[link=http://edufs.edu.htl-leonding.ac.at/~t.stuetz/hugo/]
+endif::backend-html5[]
+
+// print the toc here (not at the default position)
+//toc::[]
+
+----
+Credits to Mr. Christian Aberger - this notes are based on his lecture @ HTL Leonding
+----
+
+== Overview - What we will do
+
+.Create a Quarkus app providing a simple restful endpoint.
+.This app will be pushed automatically to github
+
+== Create a Quarkus-App
+
+.Create a repo and push to gh. The first time, you have to approve the push to github.
+image:quarkus-001.png[width=80%]
+
+.Clone the repo to your local machine
+image:quarkus-002.png[width=50%]
+
+[source,bash]
+----
+git clone https://github.com/htl-leonding/gh-actions-demo.git
+----
+
+=== Run Quarkus App
+
+----
+./mvnw clean compile quarkus:dev
+----
+
+----
+curl localhost:8080/hello-resteasy
+----
+
+.result
+----
+Hello RESTEasy
+----
+
+=== Change Quarkus Package Type
+
+* quarkus.package.type=uber-jar
+** `fast-jar` (default)
+** `legacy-jar` for the pre-1.12 default jar packaging,
+** `uber-jar`
+** `native`
+
+
+.application.properties (https://quarkus.io/guides/all-config[more information])
+----
+quarkus.package.type=uber-jar
+----
+
+----
+./mvnw clean package -B
+----
+
+.a -runner - jar is created
+----
+-rw-r--r--   1 stuetz  staff    10M Mar 13 19:17 gh-actions-demo-1.0.0-SNAPSHOT-runner.jar
+-rw-r--r--   1 stuetz  staff   4.7K Mar 13 19:17 gh-actions-demo-1.0.0-SNAPSHOT.jar.original
+----
+
+* Tests entfernen
+* laufen lassen
+
+* CI
+* CD ... continous delivery ... ausliefern
+
+////
+
+
+== Generieren eines lokalen keys
+
+== Am remote Server einloggen
+
+.öffnen einer shell mit root-rechten
+----
+sudo su -
+----
+
+.den aktuellen User zu den root-Usern hinzufügen
+----
+sudo usermod -aG sudo $USER
+----
+
+
+einen Schlüssel generieren
+----
+ssh-keygen -t rsa -b 4096
+----
+
+////
