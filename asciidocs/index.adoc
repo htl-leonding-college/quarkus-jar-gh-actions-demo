@@ -1,6 +1,6 @@
-= Security mit SSH
+= github-actions
 Thomas W. Stütz, credits to Mr. Christian Aberger
-1.0.1, 2021-03-03: How to use ssh in project work @ HTL Leonding college
+1.0.0, 2021-03-17: How to use github-actions in project work @ HTL Leonding college
 ifndef::imagesdir[:imagesdir: images]
 //:toc-placement!:  // prevents the generation of the doc at this position, so it can be printed afterwards
 :sourcedir: ../src/main/java
@@ -17,168 +17,36 @@ ifdef::backend-html5[]
 // https://fontawesome.com/v4.7.0/icons/
 icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/security-lecture-notes/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
 icon:github-square[link=https://github.com/htl-leonding-college/security-lecture-notes] ‏ ‏ ‎
-icon:home[link=http://edufs.edu.htl-leonding.ac.at/~t.stuetz/hugo/]
+icon:home[link=http://edufs.edu.htl-leonding.ac.at/~t.stuetz/hugo/2021/01/technology-notes/]
 endif::backend-html5[]
 
 // print the toc here (not at the default position)
 //toc::[]
 
 ----
-Credits to Mr. Christian Aberger - this is an excerpt of his lecture @ HTL Leonding
+Credits to Mr. Christian Aberger - this notes are based on his lecture @ HTL Leonding
 ----
 
-== SSH Client Configuration aka OpenSSH Public Key Authentification
+== Overview - What we will do
 
-=== How it works
+. Create a Quarkus app providing a simple restful endpoint.
+. This app will be pushed automatically to github
+. Prepare the remote server for deploying the quarkus app (we will use an oracle vm instance)
+. Create the gh-actions pipeline
+. Create a service for starting the quarkus-app on the remote server
 
-* pls read this article for the details -> https://linuxize.com/post/using-the-ssh-config-file/[Using the SSH Config File]
+== Creating a Virtual Maschine Instance in Oracle Cloud
 
-=== Create your own OpenSSH Public Key Authentification
+<<create-oravm.adoc#,Creating a Virtual Maschine Instance in Oracle Cloud>>
 
-==== Create Keys
 
-[source,bash]
-----
-ssh-keygen -t rsa
-----
-or
+== Create a Simple Quarkus Application
 
-[source,bash]
-----
-ssh-keygen -t rsa -b 4096
-----
+<<create-quarkus-app.adoc#,Create a Quarkus Application>>
 
-* confirm all options only with kbd:[Return] (you don't have to use a passphrase, even this is recommended)
+== Create a Continous Delivery Pipeline in gh-actions
 
-==== Transfer Public Key to the Remote Server
-
-[source,bash]
-----
-ssh-copy-id username@server
-----
-
-or
-
-.determine the name od the public key file
-[source,bash]
-----
-ssh-copy-id -i .ssh/key_rsa.pub username@server
-----
+<<gh-actions.adoc#,Create a yml-File>>
 
 
 
-
-==== Config-File
-
-* is located in the ~/.ssh-Folder.
-* contains one or multiple alias for remote server(s).
-* Name of the File: config
-
-.Example for an entry
-----
-Host vm81
-     Hostname xxx.htl-leonding.ac.at
-     User yyyyy
-     #LocalForward 4443 192.168.88.254 :8080
-----
-
-
-=== Copy a Local File to the Remote Server
-
-[source,bash]
-----
-scp <file>.<extension> <alias-of.the-remote-host>:<target-folder>
-----
-
-.ie
-[source,bash]
-----
-scp test.html vm81:/var/html
-----
-
-
-=== Run Commands on a Remote Server
-
-----
-ssh <remote-server> <command> <parameter(s)>
-----
-
-[source,bash]
-----
-ssh dev rm /xx/yy/a.txt
-----
-
-
-== Install your keys in FileZilla
-
-image:ssh-in-filezilla.png[]
-
-
-== github
-
-=== Create a pair of keys for github
-
-* menu:Settings[Secrets]
-
-* it is recommended to create an additional key for github
-
-[source,bash]
-----
-ssh-keygen -t rsa
-----
-
-----
-Generating public/private rsa key pair.
-Enter file in which to save the key (/Users/xxxx/.ssh/id_rsa): github
-Enter passphrase (empty for no passphrase):
-Enter same passphrase again:
-Your identification has been saved in github.
-Your public key has been saved in github.pub.
-The key fingerprint is:
-SHA256:cmxKyAqB4npIFdY/oINn2IkCZUCGAyTt1Uy3Dg6nYbM xxxx@Toms-MBP-2020.local
-The key's randomart image is:
-+---[RSA 3072]----+
-|@*   +. .        |
-|B.+ ..o. .       |
-|+=o.O o .        |
-|.+.* % +         |
-|+.B E * S        |
-|++.B . B         |
-|..o . . .        |
-|                 |
-|                 |
-+----[SHA256]-----+
- ~ 
-----
-
-[source,bash]
-----
-ls -l .ssh
-----
-
-----
-total 56
-drwx------   8 stuetz  staff   256B Feb 18 11:25 .
-drwxr-xr-x+ 98 stuetz  staff   3.1K Feb 18 11:25 ..
--rw-r--r--   1 stuetz  staff   183B Feb 18 11:03 config
--rw-------   1 stuetz  staff   2.5K Feb 18 11:24 github
--rw-r--r--   1 stuetz  staff   580B Feb 18 11:24 github.pub
--rw-------   1 stuetz  staff   2.5K Feb 18 10:23 id_rsa
--rw-r--r--   1 stuetz  staff   580B Feb 18 10:23 id_rsa.pub
--rw-r--r--   1 stuetz  staff   6.2K Feb 16 08:25 known_hosts
-----
-
-=== Add the private key to yout github-repo
-
-* So your github-actions-pipeline can deploy to the remote server.
-* Click the button kbd:[New repository secret]
-
-image:github-ssh.png[]
-
-
-== Sources
-
-* https://linuxize.com/post/using-the-ssh-config-file/[Using the SSH Config File, window="_blank"]
-* https://www.ssh.com/ssh/config/[Options for SSH Config File, window="_blank"]
-* https://www.cyberciti.biz/faq/create-ssh-config-file-on-linux-unix/[OpenSSH Config File Examples, window="_blank"]
-* https://www.thomas-krenn.com/de/wiki/OpenSSH_Public_Key_Authentifizierung_unter_Ubuntu[OpenSSH Public Key Authentifizierung unter Ubuntu, window="_blank"]
