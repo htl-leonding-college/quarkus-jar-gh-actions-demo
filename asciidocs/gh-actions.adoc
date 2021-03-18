@@ -382,11 +382,16 @@ image:firewall-004.png[width=70%]
 
 . Click *Add Ingress Rules*.
 +
+[%collapsible]
+====
+image:firewall-005.png[width=70%]
+====
++
 An *Add Ingress Rules* dialog is displayed.
 +
 [%collapsible]
 ====
-image:firewall-005.png[width=70%]
+image:firewall-006.png[width=70%]
 ====
 
 . Fill in the ingress rule with the following information.
@@ -405,11 +410,12 @@ Fill in the ingress rule as follows:
 +
 [%collapsible]
 ====
-image:firewall-006.png[width=70%]
 image:firewall-007.png[width=70%]
 ====
 
-Now HTTP connections are allowed. Your VCN is configured for Quarkus.
+
+* Now HTTP connections are allowed. Your VCN is configured for Quarkus.
+* The next step is to update the firewall settings for ubuntu
 
 == Update Firewall Settings
 
@@ -458,8 +464,9 @@ sudo iptables --list --line-numbers
 
 === Access your Endpoint
 
-.Start the App
+.Start the App @ the remote server
 ----
+ssh oravm
 java -jar ./gh-actions-demo-1.0.0-SNAPSHOT-runner.jar
 ----
 
