@@ -208,8 +208,7 @@ ubuntu@instance-20210316-1435:~$
 * to update your system:
 +
 ----
-sudo apt update && sudo apt -y dist-upgrade
-sudo apt autoremove
+sudo apt update && sudo apt -y dist-upgrade && sudo apt autoremove
 ----
 ====
 
@@ -259,7 +258,7 @@ We choose https://adoptopenjdk.net/installation.html?variant=openjdk15&jvmVarian
 ssh oravm
 ----
 
-.add the package manager sources for adoptopenjdk and install the jdk (you can copy-paste this paragraph)
+.add the package manager sources for adoptopenjdk and install the jdk
 [source,bash]
 ----
 # install missing dependencies

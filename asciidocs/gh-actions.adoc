@@ -339,7 +339,95 @@ java -jar gh-actions-demo-1.0.0-SNAPSHOT-runner.jar
 curl localhost:8080/hello-resteasy
 ----
 
-== Open the firewall for accessing your Endpoint
+== Create an Ingress Rule for Accessing your Endpoint
+
+Source: https://docs.oracle.com/en-us/iaas/developer-tutorials/tutorials/spring-on-ol/01oci-ol-spring-summary.htm#[Create an Ingress Rule for your VCN]
+
+
+
+Follow these steps to select your VCN's public subnet and add the ingress rule.
+
+. From the main menu, select *Networking* then select *Virtual Cloud Networks*.
++
+[%collapsible]
+====
+image:firewall-001.png[width=70%]
+====
+
+. Select the VCN you created with your compute instance.
++
+[%collapsible]
+====
+image:firewall-002.png[width=70%]
+====
+
+. With your new VCN displayed, click *<your-subnet-name>* subnet link.
++
+The *public* subnet information is displayed with the Security Lists at the bottom of the page.
+A link to the *Default Security List* for your VCN is displayed.
++
+[%collapsible]
+====
+image:firewall-003.png[width=70%]
+====
+
+. Click the *Default Security List* link.
++
+The default *Ingress Rules* for your VCN are displayed.
++
+[%collapsible]
+====
+image:firewall-004.png[width=70%]
+====
+
+. Click *Add Ingress Rules*.
++
+An *Add Ingress Rules* dialog is displayed.
++
+[%collapsible]
+====
+image:firewall-005.png[width=70%]
+====
+
+. Fill in the ingress rule with the following information.
++
+Fill in the ingress rule as follows:
+
+*  *Stateless*: Checked
+*  *Source Type*: CIDR
+*  *Source CIDR*: 0.0.0.0/0
+*  *IP Protocol*: TCP
+*  *Source port range*: (leave-blank)
+*  *Destination Port Range*: 8080
+*  *Description*: Allow HTTP connections
+
+. Click *Add Ingress Rule*.
++
+[%collapsible]
+====
+image:firewall-006.png[width=70%]
+image:firewall-007.png[width=70%]
+====
+
+Now HTTP connections are allowed. Your VCN is configured for Quarkus.
+
+== Update Firewall Settings
+
+The Ubuntu firewall is disabled by default.
+However, it is still necessary to update your iptables configuration to allow HTTP traffic.
+Execute the following commands to update iptables.
+
+.Add a rule to allow HTTP traffic (for port 8080)
+----
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 8080 -j ACCEPT
+----
+
+.Save the changes to the iptables configuration files
+----
+sudo netfilter-persistent save
+----
+
+Source: https://docs.oracle.com/en-us/iaas/developer-tutorials/tutorials/wp-on-ubuntu/01-summary.htm#install-wordpress
 
 ////
 
