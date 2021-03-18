@@ -56,10 +56,11 @@ We create an own key pair for our work in HTL Leonding college
 .Command for generating the ssh key pair
 [source,bash]
 ----
+cd ~/.ssh
 ssh-keygen -t rsa
 ----
 
-.We have to give a name to the key pair -> htl_key
+.We have to give a name to the key pair -> *htl_key*
 ----
 Generating public/private rsa key pair.
 Enter file in which to save the key (/Users/stuetz/.ssh/id_rsa): htl_key
@@ -166,13 +167,13 @@ chmod go-rw ssh-key.key.pub
 
 
 ----
-ssh <username of remote server>@<ip-address-from-oravm>
+ssh <host-alias-from-config-file>
 ----
 
 .Example
 [source,bash]
 ----
-ssh ubuntu@oravm
+ssh oravm
 ----
 
 .Result
@@ -204,7 +205,7 @@ ubuntu@instance-20210316-1435:~$
 ====
 * to use one command as root: `sudo <command>`
 * to login as root-user: `sudo -i`
-* to update your systen:
+* to update your system:
 +
 ----
 sudo apt update && sudo apt -y dist-upgrade
@@ -271,7 +272,7 @@ wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo 
 echo "deb https://adoptopenjdk.jfrog.io/adoptopenjdk/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/adoptopenjdk.list
 
 # update the package lists to get the adoptopenjdk packages entries
-sudo apt-get update
+sudo apt update
 
 # install the jdk
 sudo apt -y install adoptopenjdk-15-hotspot

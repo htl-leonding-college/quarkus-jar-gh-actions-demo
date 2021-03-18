@@ -76,20 +76,20 @@ Hello RESTEasy
 
 * There are plenty of configuration options available (https://quarkus.io/guides/all-config[more information])
 
-* Basically there are three options to configure a quarkus app
-. Add an entry to application.properties
+* Basically there are three ways to configure a quarkus app
+. Add an entry to *application.properties*
 +
 ----
 quarkus.package.type=uber-jar
 ----
 
-. Add an parameter when invoking maven
+. Add an *parameter* when invoking *maven*
 +
 ----
-/mvnw clean package -Dquarkus.package.type=uber-jar -B
+./mvnw clean package -Dquarkus.package.type=uber-jar
 ----
 
-. Add an entry to the pom.xml
+. Add an entry to the *pom.xml*
 +
 [source,xml]
 ----
@@ -105,7 +105,7 @@ quarkus.package.type=uber-jar
 
 .After compiling and packaging ...
 ----
-./mvnw clean package -B
+./mvnw clean package -Dquarkus.package.type=uber-jar
 ----
 
 .\...you get a -runner - jar with all dependencies included
@@ -117,17 +117,16 @@ quarkus.package.type=uber-jar
 === Run the jar-File
 
 ----
-java -jar gh-actions-demo-1.0.0-SNAPSHOT-runner.jar
+java -jar target/gh-actions-demo-1.0.0-SNAPSHOT-runner.jar
 ----
 
 === Check the Endpoint
 
-
 ----
-curl http://localhost:8080/vehicle
+curl http://localhost:8080/hello-resteasy
 ----
 
-.result
+.Result
 ----
 Hello RESTEasy
 ----

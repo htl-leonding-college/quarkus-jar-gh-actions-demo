@@ -95,21 +95,6 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCubid/1JXXwvLZvrq7nZJ/qkGqG0lIShEhmazwOmNk
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDxERIDOGyZeg9YUb2Xd7fir2xDd73zZnvdq0THqxcOExp6zsRhEjsvJD3l89wwc7ySfgCn/3BKy6vvP8Ommc9i3U2Of6XuiyfOn0i8POE2Dy8TUSm3utjphof7BTagko8+sb1YXPUPj2wUBGICVSgnEy5B4WdvG4HlLLJ+LEWgz0= ubuntu@instance-20210316-1435
 ----
 
-== Status Quo
-
-.When you generated your Quarkus App at quarkus.io and pushed it to github, your project should look like:
-image:quarkus-project-ciyml.png[]
-
-* There is already created a ci.yml - file
-
-* For further infomation -> https://docs.github.com/en/actions[Github Actions]
-
-* Next steps are:
-** create a ssh-key-pair on the remote server for github
-** create a secret in the gh-repo, so the remote server can be accessed by the gh-build-server
-** write the pipeline-script (.yml)
-
-
 == Create a Secret in the gh-repo
 
 === Copy the key-pair to your Local Machine
@@ -165,12 +150,72 @@ image:gh-secret3.png[]
 
 
 
+== Status Quo
+
+.When you generated your Quarkus App at quarkus.io and pushed it to github, your project should look like:
+image:quarkus-project-ciyml.png[]
+
+* There is already created a ci.yml - file
+
+* For further infomation -> https://docs.github.com/en/actions[Github Actions]
+
+* Next steps are:
+** create a ssh-key-pair on the remote server for github
+** create a secret in the gh-repo, so the remote server can be accessed by the gh-build-server
+** write the pipeline-script (.yml)
+
+
+
+
 == Commit, Push and Run the Script
 
 image:gh-actions-001.png[]
 
 * There is also a button kbd:[Re-run jobs], so you don't have to push, to run the script.
 * Now we have to complete the .yml-file
+
+== ci.yml - the complete script
+
+[%collapsible]
+====
+[source,yml]
+----
+## This is basic continuous integration build for your Quarkus application.
+
+name: Quarkus Codestart CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Build
+        run: ./mvnw clean package -Dquarkus.package.type=uber-jar -B
+      - name: install ssh key
+        uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: ${{ secrets.ORAVM }}
+      - name: create .ssh/known_hosts
+        run: |
+          ssh-keyscan -H -t rsa -v ${{ secrets.ORAVM_IP }}  >> ~/.ssh/known_hosts
+      - name: copy binaries to oravm
+        run: |
+          echo "Hallo ich bin hier"
+          ls -l target/
+          scp target/gh-actions-demo-4ahif-gr1-1.0.0-SNAPSHOT-runner.jar ${{ secrets.ORAVM_USER }}@${{ secrets.ORAVM_IP }}:
+----
+
+====
 
 
 == Structure of the Pipeline .yaml-File
@@ -262,54 +307,12 @@ jobs:
       - name: copy binaries to oravm
         run: |  # <.>
           ls -l target/
-          scp target/actions-demo-1.0.0-SNAPSHOT-runner.jar ${{ secrets.ORAVM_USER }}@${{ secrets.ORAVM_IP }}:
+          scp target/gh-actions-demo-1.0.0-SNAPSHOT-runner.jar ${{ secrets.ORAVM_USER }}@${{ secrets.ORAVM_IP }}:
 
 ----
 
 <.> the pipe-symbol "|" is needed for multiline-commands
 
-== ci.yml - the complete script
-
-[%collapsible]
-====
-[source,yml]
-----
-## This is basic continuous integration build for your Quarkus application.
-
-name: Quarkus Codestart CI
-
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-      - name: Build
-        run: ./mvnw clean package -Dquarkus.package.type=uber-jar -B
-      - name: install ssh key
-        uses: webfactory/ssh-agent@v0.4.1
-        with:
-          ssh-private-key: ${{ secrets.ORAVM }}
-      - name: create .ssh/known_hosts
-        run: |
-          ssh-keyscan -H -t rsa -v ${{ secrets.ORAVM_IP }}  >> ~/.ssh/known_hosts
-      - name: copy binaries to oravm
-        run: |
-          echo "Hallo ich bin hier"
-          ls -l target/
-          scp target/gh-actions-demo-4ahif-gr1-1.0.0-SNAPSHOT-runner.jar ${{ secrets.ORAVM_USER }}@${{ secrets.ORAVM_IP }}:
-----
-
-====
 
 == Commit, Push and Run the Script
 
@@ -338,6 +341,8 @@ curl localhost:8080/hello-resteasy
 
 == Open the firewall for accessing your Endpoint
 
+////
+
 Source: https://stackoverflow.com/a/58284110[stackoverflow]
 
 
@@ -361,7 +366,7 @@ $ sudo iptables -D INPUT 6
 ----
 sudo iptables --list --line-numbers
 ----
-
+////
 
 === Access your Endpoint
 
