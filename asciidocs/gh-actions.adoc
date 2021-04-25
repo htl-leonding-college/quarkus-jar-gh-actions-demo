@@ -32,7 +32,7 @@ Credits to Mr. Christian Aberger - this notes are based on his lecture @ HTL Leo
 .continous-deployment pipeline @ HTL Leonding
 [plantuml, align=left]
 ----
-include::plantuml/pipeline.puml[]
+include::plantuml/pipeline2.puml[]
 ----
 
 == Create ssh-key-pair
