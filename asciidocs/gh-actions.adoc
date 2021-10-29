@@ -14,11 +14,6 @@ ifndef::imagesdir[:imagesdir: images]
 //Need this blank line after ifdef, don't know why...
 ifdef::backend-html5[]
 
-// https://fontawesome.com/v4.7.0/icons/
-icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/security-lecture-notes/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
-icon:github-square[link=https://github.com/htl-leonding-college/security-lecture-notes] ‏ ‏ ‎
-icon:home[link=http://edufs.edu.htl-leonding.ac.at/~t.stuetz/hugo/]
-endif::backend-html5[]
 
 // print the toc here (not at the default position)
 //toc::[]
@@ -142,11 +137,11 @@ gedit github_key
 
 image:gh-secret1.png[width=80%]
 
--copy-paste the WHOLE private key into the input field and click kbd:[Add secret]
-image:gh-secret2.png[width=80%]
+.copy-paste the WHOLE private key into the input field and click kbd:[Add secret]
+image:gh-secret2a.png[width=80%]
 
 .create also a secret for user and ip
-image:gh-secret3.png[]
+image:gh-secret3a.png[]
 
 
 
@@ -186,33 +181,34 @@ name: Quarkus Codestart CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
         with:
-          java-version: 11
+          distribution: 'temurin'
+          java-version: '17'
       - name: Build
         run: ./mvnw clean package -Dquarkus.package.type=uber-jar -B
       - name: install ssh key
-        uses: webfactory/ssh-agent@v0.4.1
+        uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.ORAVM }}
+          ssh-private-key: ${{ secrets.SSH_SERVER_PRIVATE_KEY }}
       - name: create .ssh/known_hosts
         run: |
-          ssh-keyscan -H -t rsa -v ${{ secrets.ORAVM_IP }}  >> ~/.ssh/known_hosts
+          ssh-keyscan -H -t rsa -v ${{ secrets.SERVER }}  >> ~/.ssh/known_hosts
       - name: copy binaries to oravm
         run: |
           echo "Hallo ich bin hier"
           ls -l target/
-          scp target/gh-actions-demo-4ahif-gr1-1.0.0-SNAPSHOT-runner.jar ${{ secrets.ORAVM_USER }}@${{ secrets.ORAVM_IP }}:
+          scp target/gh-actions-demo-1.0.0-SNAPSHOT-runner.jar ${{ secrets.SERVER_USER }}@${{ secrets.SERVER }}:
 ----
 
 ====
@@ -226,15 +222,17 @@ jobs:
 ----
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 ----
 
 * After a push or an accepted pull request, the script will be started.
 
 
-=== Select the os of the vm
+IMPORTANT: The master branch should be renamed -> ie main
+
+=== Select the OS of the VM
 
 [source,yaml]
 ----
@@ -252,18 +250,21 @@ jobs:
 
 ----
 
-=== Install JDK11
+=== Install JDK17
+
+* https://github.com/actions/setup-java[, window="_blank"]
 
 [source,yaml]
 ----
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
         with:
-          java-version: 11
+          distribution: 'temurin'
+          java-version: '17'
 ----
 
 * You can choose, which version you install
-* For compatibility reasons you could also install https://github.com/marketplace/actions/setup-java-using-binaries-from-adoptopenjdk[adoptopenjdk]
+
 
 
 
@@ -285,19 +286,20 @@ jobs:
 [source,yaml]
 ----
       - name: install ssh key
-        uses: webfactory/ssh-agent@v0.4.1
+        uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.ORAVM }}  # <.>
+          ssh-private-key: ${{ secrets.SSH_SERVER_PRIVATE_KEY }} # <.>
 ----
 
-<.> Here you have to input the created secret ORAVM
+<.> Here you have to input the created secret SSH_SERVER_PRIVATE_KEY
 
 === Make an Entry into known_hosts
 
 [source,yaml]
 ----
       - name: create .ssh/known_hosts
-        run: ssh-keyscan -H -t rsa -v ${{ secrets.ORAVM_IP }}  >> ~/.ssh/known_hosts
+        run: |
+          ssh-keyscan -H -t rsa -v ${{ secrets.SERVER }}  >> ~/.ssh/known_hosts
 ----
 
 === Copy The Binaries to the Remote Server
@@ -305,10 +307,10 @@ jobs:
 [source,yaml]
 ----
       - name: copy binaries to oravm
-        run: |  # <.>
+        run: |
+          echo "Hallo ich bin hier"
           ls -l target/
-          scp target/gh-actions-demo-1.0.0-SNAPSHOT-runner.jar ${{ secrets.ORAVM_USER }}@${{ secrets.ORAVM_IP }}:
-
+          scp target/gh-actions-demo-1.0.0-SNAPSHOT-runner.jar ${{ secrets.SERVER_USER }}@${{ secrets.SERVER }}:
 ----
 
 <.> the pipe-symbol "|" is needed for multiline-commands
@@ -336,7 +338,7 @@ java -jar gh-actions-demo-1.0.0-SNAPSHOT-runner.jar
 ----
 
 ----
-curl localhost:8080/hello-resteasy
+curl localhost:8080/hello
 ----
 
 == Create an Ingress Rule for Accessing your Endpoint
@@ -472,7 +474,7 @@ java -jar ./gh-actions-demo-1.0.0-SNAPSHOT-runner.jar
 
 .From a terminal at your local machine
 ----
-curl http://130.61.185.104:8080/hello-resteasy
+curl http://152.70.190.97:8080/hello
 ----
 
 .Result

@@ -15,8 +15,8 @@ ifndef::imagesdir[:imagesdir: images]
 ifdef::backend-html5[]
 
 // https://fontawesome.com/v4.7.0/icons/
-icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/security-lecture-notes/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
-icon:github-square[link=https://github.com/htl-leonding-college/security-lecture-notes] ‏ ‏ ‎
+icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/quarkus-jar-gh-actions-demo/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
+icon:github-square[link=https://github.com/htl-leonding-college/quarkus-jar-gh-actions-demo] ‏ ‏ ‎
 icon:home[link=http://edufs.edu.htl-leonding.ac.at/~t.stuetz/hugo/]
 endif::backend-html5[]
 
@@ -51,7 +51,7 @@ git clone https://github.com/htl-leonding/gh-actions-demo.git
 ----
 
 ----
-curl localhost:8080/hello-resteasy
+curl localhost:8080/hello
 ----
 
 .result
@@ -123,7 +123,7 @@ java -jar target/gh-actions-demo-1.0.0-SNAPSHOT-runner.jar
 === Check the Endpoint
 
 ----
-curl http://localhost:8080/hello-resteasy
+curl http://localhost:8080/hello
 ----
 
 .Result
