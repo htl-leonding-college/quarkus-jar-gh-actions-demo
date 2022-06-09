@@ -1,4 +1,4 @@
-= Continous Deployment w/ gh-actions
+= Continuous Deployment w/ gh-actions
 Thomas W. Stütz, credits to Mr. Christian Aberger
 1.0.0, 2021-03-17: How to use github-actions in project work @ HTL Leonding college
 ifndef::imagesdir[:imagesdir: images]
@@ -57,20 +57,20 @@ image:ci-cd-cd-atlassian.png[]
 
 image::cicd-pipeline.png[]
 
-* continous integration
+* continuous integration
 ** local development in IDE.
 ** commit/push to remote repo
 ** testing the code with gh-actions
 
 
-* continous delivery
-** continous integration
+* continuous delivery
+** continuous integration
 ** create a release and deliver to
 *** staging server or
 *** gh-packages
 
-* continous development
-** continous integration + continous delivery
+* continuous development
+** continuous integration + continuous delivery
 ** deployment on production server (or cloud, ...)
 
 
