@@ -24,7 +24,7 @@ endif::backend-html5[]
 //toc::[]
 
 ----
-Credits to Mr. Christian Aberger - this notes are based on his lecture @ HTL Leonding
+Credits to Mr. Christian Aberger - this notes are also based on his lecture @ HTL Leonding
 ----
 
 == Continous Integration vs Delivery vs Deployment

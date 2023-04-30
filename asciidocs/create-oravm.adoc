@@ -102,6 +102,8 @@ image:oracle-cloud-003.png[width=50%]
 .Choose "Create a VM Instance"
 image:oracle-cloud-004.png[width=80%]
 
+image:oracle-cloud-004a.png[width=80%]
+
 .Edit "Placement and hardware"
 image:oracle-cloud-005.png[width=80%]
 
@@ -149,7 +151,7 @@ Host <choose a name for your remote server>
 .Example
 ----
 Host oravm
-     Hostname 130.61.185.123
+     Hostname 144.24.189.164
      User ubuntu
      IdentityFile ~/.ssh/htl_key
 ----
@@ -247,10 +249,10 @@ There are different options:
 
 * openjdk
 * Oracle JDK
-* adoptopenjdk
+* *adoptium / temurin*
 * ...
 
-We choose https://adoptopenjdk.net/installation.html?variant=openjdk15&jvmVariant=hotspot#x64_linux-jdk[adoptopenjdk]:
+We choose https://adoptium.net/de/installation/linux/[temurin]:
 
 .First login
 [source,bash]
@@ -262,19 +264,20 @@ ssh oravm
 [source,bash]
 ----
 # install missing dependencies
-sudo apt -y install wget apt-transport-https gnupg
+sudo apt install -y wget apt-transport-https
 
 # install the gpg key
-wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
+mkdir -p /etc/apt/keyrings
+wget -O - https://packages.adoptium.net/artifactory/api/gpg/key/public | sudo tee /etc/apt/keyrings/adoptium.asc
 
 # make an entry in the package manager sources - file
-echo "deb https://adoptopenjdk.jfrog.io/adoptopenjdk/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/adoptopenjdk.list
+sudo echo "deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | sudo tee /etc/apt/sources.list.d/adoptium.list
 
 # update the package lists to get the adoptopenjdk packages entries
 sudo apt update
 
 # install the jdk
-sudo apt -y install adoptopenjdk-15-hotspot
+sudo apt install -y temurin-17-jdk
 
 # now check the java version
 java -version
@@ -293,25 +296,29 @@ https://docs.docker.com/engine/install/ubuntu/
 ----
 sudo apt-get update
 
-sudo apt -y install \
-    apt-transport-https \
+sudo apt-get install \
     ca-certificates \
     curl \
-    gnupg \
-    lsb-release
+    gnupg
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
 
 echo \
-  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-sudo apt update
+sudo apt-get update
 
-sudo apt -y install docker-ce docker-ce-cli containerd.io
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+docker --version
+docker compose version
 ----
 
-
+////
 == Install docker-compose
 
 check here for the latest version:
@@ -325,3 +332,4 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 docker-compose --version
 ----
+////
