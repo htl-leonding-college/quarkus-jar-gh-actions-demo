@@ -14,8 +14,8 @@ ifndef::imagesdir[:imagesdir: images]
 
 == What to do?
 
-* First we create an https://www.oracle.com/cloud/free/[Oracle VM instance]
-* Afterwards we will login into the Oracle VM instance (called `oravm`)
+* First we create an https://www.oracle.com/cloud/free/[Oracle VM instance^]
+* Afterward we will login into the Oracle VM instance (called `oravm`)
 per ssh-session w/o using username and password.
 
 We have to use a ssh.key-pair. The public key must be transferred into the .ssh-folder on the remote server.
@@ -252,7 +252,7 @@ There are different options:
 * *adoptium / temurin*
 * ...
 
-We choose https://adoptium.net/de/installation/linux/[temurin]:
+We choose https://adoptium.net/de/installation/linux/[temurin^]:
 
 .First login
 [source,bash]
@@ -290,7 +290,7 @@ javac -version
 
 == Install Docker
 
-https://docs.docker.com/engine/install/ubuntu/
+https://docs.docker.com/engine/install/ubuntu/[^]
 
 [source,bash]
 ----
