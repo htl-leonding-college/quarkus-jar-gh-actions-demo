@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.18">
+<meta name="generator" content="Asciidoctor 2.0.20">
 <meta name="author" content="Thomas W. Stütz">
 <link rel="icon" type="image/png" href="themes/favicon.png">
 <title>Create and Configure a Oracle VM Instance in the Oracle Cloud</title>
@@ -210,13 +210,10 @@ table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
 .admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
 .admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
 .exampleblock>.content{border:1px solid #e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;border-radius:4px}
-.exampleblock>.content>:first-child{margin-top:0}
-.exampleblock>.content>:last-child{margin-bottom:0}
 .sidebarblock{border:1px solid #dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;border-radius:4px}
-.sidebarblock>:first-child{margin-top:0}
-.sidebarblock>:last-child{margin-bottom:0}
 .sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
-.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content>:first-child,.sidebarblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child,.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
 .literalblock pre,.listingblock>.content>pre{border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
 @media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
 @media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
@@ -395,7 +392,7 @@ b.conum *{color:inherit!important}
 dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
 h1,h2,p,td.content,span.alt,summary{letter-spacing:-.01em}
 p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
-p,blockquote,dt,td.content,span.alt,summary{font-size:1.0625rem}
+p,blockquote,dt,td.content,td.hdlist1,span.alt,summary{font-size:1.0625rem}
 p{margin-bottom:1.25rem}
 .sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
 .exampleblock>.content{background:#fffef7;border-color:#e0e0dc;box-shadow:0 1px 4px #e0e0dc}
@@ -594,10 +591,10 @@ pre.rouge .hll * {
 <div class="ulist">
 <ul>
 <li>
-<p>First we create an <a href="https://www.oracle.com/cloud/free/">Oracle VM instance</a></p>
+<p>First we create an <a href="https://www.oracle.com/cloud/free/" target="_blank" rel="noopener">Oracle VM instance</a></p>
 </li>
 <li>
-<p>Afterwards we will login into the Oracle VM instance (called <code>oravm</code>)
+<p>Afterward we will login into the Oracle VM instance (called <code>oravm</code>)
 per ssh-session w/o using username and password.</p>
 </li>
 </ul>
@@ -607,7 +604,7 @@ per ssh-session w/o using username and password.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="images/ssh-overview.png" alt="ssh overview" width="625" height="303">
+<img src="images/ssh-overview.png" alt="ssh overview" width="625" height="304">
 </div>
 </div>
 <div class="olist arabic">
@@ -648,31 +645,32 @@ per ssh-session w/o using username and password.</p>
 <div class="title">Command for generating the ssh key pair</div>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="bash"><span class="nb">cd</span> ~/.ssh
-ssh-keygen <span class="nt">-t</span> rsa</code></pre>
+ssh-keygen <span class="nt">-t</span> ecdsa</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">We have to give a name to the key pair &#8594; <strong>htl_key</strong></div>
 <div class="content">
-<pre>Generating public/private rsa key pair.
-Enter file in which to save the key (/Users/stuetz/.ssh/id_rsa): htl_key
+<pre>Generating public/private ecdsa key pair.
+Enter file in which to save the key (/home/stuetz/.ssh/id_ecdsa): htl_key
 Enter passphrase (empty for no passphrase):
 Enter same passphrase again:
-Your identification has been saved in htl_key.
-Your public key has been saved in htl_key.pub.
+Your identification has been saved in htl_key
+Your public key has been saved in htl_key.pub
 The key fingerprint is:
-SHA256:GX4Zz1fdg53dwj335964Yl1hqK6RWP6pDb5hzmj3jos stuetz@Toms-MBP-2020.local
+SHA256:9SQVFDAdo0u6ILR/KEWRHrs3t9gvo3C9T69Jo9+rMus
+stuetz@ubuntu-linux-22-04-desktop
 The key's randomart image is:
-+---[RSA 3072]----+
-|              . o|
-|               o.|
-|        . .  .. .|
-|       . o = .o .|
-|        S o = ooo|
-|       . .o. O +*|
-|      o o+..B =o+|
-|     . oo=.oo*  +|
-|      E.===oo..o=|
++---[ECDSA 256]---+
+|      ..  o+B+   |
+|      o.   +..   |
+|    ...o  = .    |
+|   . oo  + =     |
+|    o o.S . .    |
+|     +.ooo.      |
+|    . +.+=..+    |
+|     . +. B= =   |
+|        .oEXBo+. |
 +----[SHA256]-----+</pre>
 </div>
 </div>
@@ -882,7 +880,7 @@ ubuntu@instance-20210316-1435:~$</pre>
 </ul>
 </div>
 <div class="paragraph">
-<p>We choose <a href="https://adoptium.net/de/installation/linux/">temurin</a>:</p>
+<p>We choose <a href="https://adoptium.net/de/installation/linux/" target="_blank" rel="noopener">temurin</a>:</p>
 </div>
 <div class="listingblock">
 <div class="title">First login</div>
@@ -922,7 +920,7 @@ javac <span class="nt">-version</span></code></pre>
 <h2 id="_install_docker"><a class="anchor" href="#_install_docker"></a>7. Install Docker</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="https://docs.docker.com/engine/install/ubuntu/" class="bare">https://docs.docker.com/engine/install/ubuntu/</a></p>
+<p><a href="https://docs.docker.com/engine/install/ubuntu/" class="bare" target="_blank" rel="noopener">https://docs.docker.com/engine/install/ubuntu/</a></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -956,7 +954,7 @@ docker compose version</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 1.0.1<br>
-Last updated 2023-04-30 12:32:39 UTC
+Last updated 2023-11-14 07:16:13 UTC
 </div>
 </div>
 </body>
