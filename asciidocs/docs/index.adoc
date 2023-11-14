@@ -15,7 +15,7 @@ ifndef::imagesdir[:imagesdir: images]
 ifdef::backend-html5[]
 
 // https://fontawesome.com/v4.7.0/icons/
-icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/quarkus-jar-gh-actions-demo/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
+icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/quarkus-jar-gh-actions-demo/main/asciidocs/{docname}.adoc] ‏ ‏ ‎
 icon:github-square[link=https://github.com/htl-leonding-college/quarkus-jar-gh-actions-demo] ‏ ‏ ‎
 icon:home[link=http://bit.ly/htl-leonding]
 endif::backend-html5[]
