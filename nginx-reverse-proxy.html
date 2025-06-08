@@ -5,9 +5,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.20">
-<meta name="author" content="Thomas W. Stütz">
+<meta name="author" content="Thomas W. Stütz, credits to Mr. Christian Aberger">
 <link rel="icon" type="image/png" href="themes/favicon.png">
-<title>github - refuse Workflow</title>
+<title>nginx as Reverse Proxy (work-in-progress)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -436,6 +436,120 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
+pre.rouge table td { padding: 5px; }
+pre.rouge table pre { margin: 0; }
+pre.rouge, pre.rouge .w {
+  color: #24292f;
+  background-color: #f6f8fa;
+}
+pre.rouge .k, pre.rouge .kd, pre.rouge .kn, pre.rouge .kp, pre.rouge .kr, pre.rouge .kt, pre.rouge .kv {
+  color: #cf222e;
+}
+pre.rouge .gr {
+  color: #f6f8fa;
+}
+pre.rouge .gd {
+  color: #82071e;
+  background-color: #ffebe9;
+}
+pre.rouge .nb {
+  color: #953800;
+}
+pre.rouge .nc {
+  color: #953800;
+}
+pre.rouge .no {
+  color: #953800;
+}
+pre.rouge .nn {
+  color: #953800;
+}
+pre.rouge .sr {
+  color: #116329;
+}
+pre.rouge .na {
+  color: #116329;
+}
+pre.rouge .nt {
+  color: #116329;
+}
+pre.rouge .gi {
+  color: #116329;
+  background-color: #dafbe1;
+}
+pre.rouge .kc {
+  color: #0550ae;
+}
+pre.rouge .l, pre.rouge .ld, pre.rouge .m, pre.rouge .mb, pre.rouge .mf, pre.rouge .mh, pre.rouge .mi, pre.rouge .il, pre.rouge .mo, pre.rouge .mx {
+  color: #0550ae;
+}
+pre.rouge .sb {
+  color: #0550ae;
+}
+pre.rouge .bp {
+  color: #0550ae;
+}
+pre.rouge .ne {
+  color: #0550ae;
+}
+pre.rouge .nl {
+  color: #0550ae;
+}
+pre.rouge .py {
+  color: #0550ae;
+}
+pre.rouge .nv, pre.rouge .vc, pre.rouge .vg, pre.rouge .vi, pre.rouge .vm {
+  color: #0550ae;
+}
+pre.rouge .o, pre.rouge .ow {
+  color: #0550ae;
+}
+pre.rouge .gh {
+  color: #0550ae;
+  font-weight: bold;
+}
+pre.rouge .gu {
+  color: #0550ae;
+  font-weight: bold;
+}
+pre.rouge .s, pre.rouge .sa, pre.rouge .sc, pre.rouge .dl, pre.rouge .sd, pre.rouge .s2, pre.rouge .se, pre.rouge .sh, pre.rouge .sx, pre.rouge .s1, pre.rouge .ss {
+  color: #0a3069;
+}
+pre.rouge .nd {
+  color: #8250df;
+}
+pre.rouge .nf, pre.rouge .fm {
+  color: #8250df;
+}
+pre.rouge .err {
+  color: #f6f8fa;
+  background-color: #82071e;
+}
+pre.rouge .c, pre.rouge .ch, pre.rouge .cd, pre.rouge .cm, pre.rouge .cp, pre.rouge .cpf, pre.rouge .c1, pre.rouge .cs {
+  color: #6e7781;
+}
+pre.rouge .gl {
+  color: #6e7781;
+}
+pre.rouge .gt {
+  color: #6e7781;
+}
+pre.rouge .ni {
+  color: #24292f;
+}
+pre.rouge .si {
+  color: #24292f;
+}
+pre.rouge .ge {
+  color: #24292f;
+  font-style: italic;
+}
+pre.rouge .gs {
+  color: #24292f;
+  font-weight: bold;
+}
+</style>
+<style>
 pre.rouge .hll {
   background-color: #ffc;
 }
@@ -446,103 +560,758 @@ pre.rouge .hll * {
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
-<h1>github - refuse Workflow</h1>
+<h1>nginx as Reverse Proxy (work-in-progress)</h1>
 <div class="details">
-<span id="author" class="author">Thomas W. Stütz</span><br>
-<span id="revnumber">version 1.0.0,</span>
-<span id="revdate">2021-03-17</span>
-<br><span id="revremark">How to use ssh in project work @ HTL Leonding college</span>
+<span id="author" class="author">Thomas W. Stütz, credits to Mr. Christian Aberger</span><br>
+<span id="revnumber">version 0.0.1,</span>
+<span id="revdate">{docdate</span>
+<br><span id="revremark">formatdate("yyyy-MM-dd")}: How to install nginx reverse proxy on a server @ HTL Leonding college</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_problem_refusing_to_allow_an_oauth_app_to_create_or_update_workflow">1. Problem: refusing to allow an OAuth App to create or update workflow</a></li>
-<li><a href="#_for_intellij">2. For IntelliJ</a></li>
-<li><a href="#_for_windows_10">3. For Windows 10</a></li>
+<li><a href="#_what_to_do">1. What to do?</a></li>
+<li><a href="#_prepare_the_server">2. Prepare the Server</a></li>
+<li><a href="#_install_passwordless_ssh_access">3. Install passwordless ssh access</a></li>
+<li><a href="#_install_nginx">4. Install nginx</a></li>
+<li><a href="#_install_lets_encrypt_ssl_certificates">5. Install Let&#8217;s Encrypt SSL Certificates</a></li>
+<li><a href="#_make_your_first_website">6. Make your first website</a></li>
+<li><a href="#_install_a_reverse_proxy">7. Install a Reverse Proxy</a></li>
+<li><a href="#_build_the_gh_pages_pipeline">8. Build the gh-pages pipeline</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
-<div id="preamble">
+<div class="sect1">
+<h2 id="_what_to_do"><a class="anchor" href="#_what_to_do"></a>1. What to do?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><span class="icon"><a class="image" href="https://raw.githubusercontent.com/htl-leonding-college/quarkus-jar-actions-demo/master/asciidocs/gh-refuse-workflow.adoc"><i class="fa fa-file-text-o"></i></a></span> ‏ ‏ ‎
-<span class="icon"><a class="image" href="https://github.com/htl-leonding-college/quarkus-jar-actions-demo"><i class="fa fa-github-square"></i></a></span> ‏ ‏ ‎
-<span class="icon"><a class="image" href="http://edufs.edu.htl-leonding.ac.at/~t.stuetz/hugo/"><i class="fa fa-home"></i></a></span></p>
+<p>We want to prepare a server with a simple nginx-web-server for accessing its web pages with https.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_problem_refusing_to_allow_an_oauth_app_to_create_or_update_workflow"><a class="anchor" href="#_problem_refusing_to_allow_an_oauth_app_to_create_or_update_workflow"></a>1. Problem: refusing to allow an OAuth App to create or update workflow</h2>
+<h2 id="_prepare_the_server"><a class="anchor" href="#_prepare_the_server"></a>2. Prepare the Server</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p>When pushing to github an error orccurs</p>
+<p>Configuration</p>
+<div class="ulist">
+<ul>
+<li>
+<p>ubuntu server</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_install_passwordless_ssh_access"><a class="anchor" href="#_install_passwordless_ssh_access"></a>3. Install passwordless ssh access</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Forst we create a ssh-key-pair for the server, so we can access it via ssh without entering a password.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">vm</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash">apt <span class="nb">install </span>openssh-server</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">local</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash"><span class="nb">cd</span> ~/.ssh
+<span class="nb">mkdir </span>vm761
+<span class="nb">cd </span>vm761
+ssh-keygen</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You can choose a name for the ssh-key-files. Here we use <code>ssh-key-vm761</code>, so each vm has its own key-pair.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">result</div>
+<div class="content">
+<pre>Generating public/private ed25519 key pair.
+Enter file in which to save the key (/Users/stuetz/.ssh/id_ed25519): ssh-key-vm761
+Enter passphrase for "ssh-key-vm761" (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in ssh-key-vm761
+Your public key has been saved in ssh-key-vm761.pub
+The key fingerprint is:
+SHA256:J6mtqLycasUUh7Lj9ufNOrRQo1xabNc794vliiVZ0xE stuetz@Toms-MBP-2022.fritz.box
+The key's randomart image is:
++--[ED25519 256]--+
+|    .        E   |
+| . o .        .  |
+|  o +   .    .   |
+| o . B . o  . .  |
+|. = B o S oo .   |
+| o B . o =o..    |
+|. o o o .oo...   |
+| + o =o.  + +.   |
+|o.*o+o+o . o.o.  |
++----[SHA256]-----+</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">local</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash">ssh-copy-id <span class="nt">-i</span> ssh-key-vm761 myuser@vm761.htl-leonding.ac.at</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">result</div>
+<div class="content">
+<pre>/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "ssh-key-vm761.pub"
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+myuser@vm761.htl-leonding.ac.at's password:
+Permission denied, please try again.
+myuser@vm761.htl-leonding.ac.at's password:
+
+Number of key(s) added:        1
+
+Now try logging into the machine, with: "ssh -i ./ssh-key-vm761 'myuser@vm761.htl-leonding.ac.at'"
+and check to make sure that only the key(s) you wanted were added.</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">local</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash">ssh <span class="nt">-i</span> ./ssh-key-vm761 <span class="s1">'myuser@vm761.htl-leonding.ac.at'</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">result</div>
+<div class="content">
+<pre>Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-60-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Sat Jun  7 17:28:21 UTC 2025
+
+  System load:  0.31               Processes:               204
+  Usage of /:   34.2% of 78.19GB   Users logged in:         1
+  Memory usage: 4%                 IPv4 address for ens160: 10.191.112.141
+  Swap usage:   0%
+
+ * Strictly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s
+   just raised the bar for easy, resilient and secure K8s cluster deployment.
+
+   https://ubuntu.com/engage/secure-kubernetes-at-the-edge
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>First, we check if the public key is copied to the server.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">vm</div>
+<div class="content">
+<pre>cat /home/myuser/.ssh/authorized_keys</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">result</div>
+<div class="content">
+<pre>ssh-ed25519 AAAAC3Ndfgdfgh4d5f4h5dfs4ghdfg5540aXdxsnIyWORgLgq0x+LTqSkzOdLPOADp9H stuetz@Toms-MBP-2022.fritz.box</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Add an entry to the <code>~/.ssh/config</code> file, so we can access the server with a simple command.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">local</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash">nano ~/.ssh/config</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Add the following lines to the <code>~/.ssh/config</code> file:
+.vm: <code>~/.ssh/config</code></p>
 </li>
 </ul>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>error: failed to push some refs to 'https://github.com/htl-leonding/xxx.git'
-To https://github.com/htl-leonding/xxx.git
-!	refs/heads/master:refs/heads/master	[remote rejected] (refusing to allow an OAuth App to create or update workflow `.github/workflows/ci.yml` without `workflow` scope)
-Done</pre>
+<pre>Host vm761
+    HostName vm761.htl-leonding.ac.at
+    User myuser
+    IdentityFile ~/.ssh/ssh-key-vm761</pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Check, if the login works. When you disable in the next step the password authentication, you will not be able to login anymore if the public key is not copied correctly.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">local</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash">ssh vm761</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>When successful, you should see a welcome message of the server.</p>
+</li>
+<li>
+<p>Now logout with <code>exit</code> or <code>logout</code>.</p>
+</li>
+<li>
+<p>Now we disable the password authentication for ssh, so only the public key authentication is allowed.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">vm</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash"><span class="nb">sudo </span>nano /etc/ssh/sshd_config</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Change the following lines:
+.vm: <code>/etc/ssh/sshd_config</code></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>PasswordAuthentication no</pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_for_intellij"><a class="anchor" href="#_for_intellij"></a>2. For IntelliJ</h2>
+<h2 id="_install_nginx"><a class="anchor" href="#_install_nginx"></a>4. Install nginx</h2>
 <div class="sectionbody">
-<div class="olist arabic">
-<ol class="arabic">
+<div class="ulist">
+<ul>
 <li>
-<p>In your Github account, go to <strong>Settings</strong> (in your avatar dropdown in the top right-hand corner)</p>
+<p>Update the package list and update the installed packages on the server.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">vm</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash"><span class="nb">sudo </span>apt update <span class="o">&amp;&amp;</span> <span class="nb">sudo </span>apt dist-upgrade <span class="nt">-y</span></code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Install nginx</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">vm</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash"><span class="nb">sudo </span>apt <span class="nb">install </span>nginx</code></pre>
+</div>
+</div>
+<details>
+<summary class="title">Notes</summary>
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>the configuration files are located in <code>/etc/nginx/sites-available/</code> and <code>/etc/nginx/sites-enabled/</code></p>
 </li>
 <li>
-<p>Go to <strong>Developer Settings</strong> &gt; <strong>Personal Access Tokens</strong></p>
+<p>Possibly, important commands</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>systemctl status nginx
+systemctl enable nginx
+systemctl restart nginx
+netstat -ant</pre>
+</div>
+</div>
+</div>
+</details>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_install_lets_encrypt_ssl_certificates"><a class="anchor" href="#_install_lets_encrypt_ssl_certificates"></a>5. Install Let&#8217;s Encrypt SSL Certificates</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>We are using certificates from <a href="https://letsencrypt.org/" target="_blank" rel="noopener">Let&#8217;s Encrypt</a> to secure our nginx server with SSL.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="https://letsencrypt.org/" target="_blank" rel="nofollow noopener"><img src="images/lets-encrypt.png" alt="lets encrypt"></a>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Install the certbot package for managing SSL certificates.</p>
 </li>
 <li>
-<p>If your application is listed, click on its name to edit the settings associated with its OAuth token. Make sure workflow is ticked.</p>
-</li>
+<p>you can choose your web-server and os</p>
+<div class="ulist">
+<ul>
 <li>
-<p>Click on Update Token to save the change.</p>
+<p><a href="https://certbot.eff.org/instructions?ws=nginx&amp;os=snap&amp;tab=standard" target="_blank" rel="noopener">Certbot Instructions</a></p>
 </li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="https://certbot.eff.org/instructions?ws=nginx&os=snap&tab=standard"><img src="images/certbox-instructions.png" alt="certbox instructions"></a>
+</div>
+</div>
+<div class="ulist">
+<ul>
 <li>
-<p>On the same page, click on Generate Token. Read the information carefully, then click OK to continue.</p>
+<p>Unfortunately, we have to use the snap package manager to install certbot, so we can use the latest version of certbot.</p>
 </li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">vm</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash"><span class="nb">sudo </span>snap <span class="nb">install</span> <span class="nt">--classic</span> certbot
+<span class="nb">sudo ln</span> <span class="nt">-s</span> /snap/bin/certbot /usr/bin/certbot
+<span class="nb">sudo </span>certbot <span class="nt">--nginx</span></code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
 <li>
-<p>Copy the new token that Github shows you.</p>
+<p>Now test the renewal of the certificate.</p>
 </li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">vm</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash"><span class="nb">sudo </span>certbot renew <span class="nt">--dry-run</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">result</div>
+<div class="content">
+<pre>Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Enter email address or hit Enter to skip.
+ (Enter 'c' to cancel): &lt;my-email-address&gt;  <i class="conum" data-value="1"></i><b>(1)</b>
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Please read the Terms of Service at:
+https://letsencrypt.org/documents/LE-SA-v1.5-February-24-2025.pdf
+You must agree in order to register with the ACME server. Do you agree?
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+(Y)es/(N)o: y   <i class="conum" data-value="2"></i><b>(2)</b>
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Would you be willing, once your first certificate is successfully issued, to
+share your email address with the Electronic Frontier Foundation, a founding
+partner of the Let's Encrypt project and the non-profit organization that
+develops Certbot? We'd like to send you email about our work encrypting the web,
+EFF news, campaigns, and ways to support digital freedom.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+(Y)es/(N)o: n   <i class="conum" data-value="3"></i><b>(3)</b>
+Account registered.
+Please enter the domain name(s) you would like on your certificate (comma and/or
+space separated) (Enter 'c' to cancel): vm141.htl-leonding.ac.at
+Requesting a certificate for vm141.htl-leonding.ac.at
+
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/vm141.htl-leonding.ac.at/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/vm141.htl-leonding.ac.at/privkey.pem
+This certificate expires on 2025-09-06.
+These files will be updated when the certificate renews.
+Certbot has set up a scheduled task to automatically renew this certificate in the background.
+
+Deploying certificate
+Successfully deployed certificate for vm141.htl-leonding.ac.at to /etc/nginx/sites-enabled/default
+Congratulations! You have successfully enabled HTTPS on https://vm761.htl-leonding.ac.at  <i class="conum" data-value="4"></i><b>(4)</b>
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+If you like Certbot, please consider supporting our work by:
+ * Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+ * Donating to EFF:                    https://eff.org/donate-le
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>use your email address</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>n</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>n</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>your domain name
+<div class="ulist">
+<ul>
 <li>
-<p>You will need to recreate your application&#8217;s integration with Github using the new token for the change to take effect.</p>
+<p>Now we make an dry-run of the renewal process to check if everything is working correctly.</p>
 </li>
-</ol>
+</ul>
+</div></td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">vm</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash"><span class="nb">sudo </span>certbot renew <span class="nt">--dry-run</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">result</div>
+<div class="content">
+<pre>Saving debug log to /var/log/letsencrypt/letsencrypt.log
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Processing /etc/letsencrypt/renewal/vm761.htl-leonding.ac.at.conf
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Account registered.
+Simulating renewal of an existing certificate for vm761.htl-leonding.ac.at
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Congratulations, all simulated renewals succeeded:
+  /etc/letsencrypt/live/vm761.htl-leonding.ac.at/fullchain.pem (success)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You find the cronjob for the automatic renewal of the certificates in the <code>/etc/cron.d/certbot</code> file.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">vm</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash">systemctl list-timers</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>In IntelliJ, the last step was to go to Settings &gt; Version Control &gt; GitHub, then remove the existing integration and re-add it, pasting in the new token. You&#8217;ll have to find out what needs to be done for the tool you&#8217;re using to give it the new GitHub OAuth token.</p>
+<p>or</p>
 </div>
-<div class="paragraph">
-<p><a href="https://stackoverflow.com/a/64080046">stackoverflow</a></p>
+<div class="listingblock">
+<div class="content">
+<pre>sudo cat /etc/crontab</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">result</div>
+<div class="content">
+<pre># /etc/crontab: system-wide crontab
+# Unlike any other crontab you don't have to run the `crontab'
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields,
+# that none of the other crontabs do.
+
+SHELL=/bin/sh
+# You can also override PATH, but by default, newer versions inherit it from the environment
+#PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name command to be executed
+17 *	* * *	root	cd / &amp;&amp; run-parts --report /etc/cron.hourly
+25 6	* * *	root	test -x /usr/sbin/anacron || { cd / &amp;&amp; run-parts --report /etc/cron.daily; }
+47 6	* * 7	root	test -x /usr/sbin/anacron || { cd / &amp;&amp; run-parts --report /etc/cron.weekly; }
+52 6	1 * *	root	test -x /usr/sbin/anacron || { cd / &amp;&amp; run-parts --report /etc/cron.monthly; }
+#</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Now we check if the nginx server is running and serving the default page.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/nginx-initial.png" alt="nginx initial">
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_for_windows_10"><a class="anchor" href="#_for_windows_10"></a>3. For Windows 10</h2>
+<h2 id="_make_your_first_website"><a class="anchor" href="#_make_your_first_website"></a>6. Make your first website</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Go to Settings &#8594; Credentials Manager &#8594; Windows Credentials &#8594; Remove github.com credentials &#8594; git pull/push your github project from git-bash console &#8594; Reconnect GitHub Account in your IDE/Source control. You don&#8217;t need create Personal Access Token with "workflow", you don';t need create secret GITHUB_TOKEN (it creates auto and can&#8217;t created manual)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The default nginx page is located in the <code>/var/www/html/index.nginx-debian.html</code> file.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><a href="https://stackoverflow.com/a/64352809">stackoverflow</a></p>
+<div class="listingblock">
+<div class="title">Change the owner of the <code>/var/www/html</code> directory to your user, so you can edit the files without using <code>sudo</code>.</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash"><span class="nb">sudo chown</span> <span class="nt">-R</span> my-user:my-user /var/www/html</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Now we can edit the default page and change it to our first website.
+.vm</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>nano /var/www/html/index.nginx-debian.html</pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/nginx-page.png" alt="nginx page">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_install_a_reverse_proxy"><a class="anchor" href="#_install_a_reverse_proxy"></a>7. Install a Reverse Proxy</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>work in progress, this will be done later</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_build_the_gh_pages_pipeline"><a class="anchor" href="#_build_the_gh_pages_pipeline"></a>8. Build the gh-pages pipeline</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Now create a very simple Angular project in a github-repository.</p>
+<div class="imageblock">
+<div class="content">
+<img src="images/repo-reverse-proxy.png" alt="repo reverse proxy">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clone the repo.</p>
+</li>
+<li>
+<p>Create a new Angular project with the name <code>angular-demo</code>.</p>
+<div class="listingblock">
+<div class="content">
+<pre>mkdir frontend
+cd frontend
+ng new angular-demo
+cd angular-demo</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Edit <code>app.html</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">frontend/angular-demo/src/app/app.html</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="html"><span class="nt">&lt;h1&gt;</span>Angular Demo<span class="nt">&lt;/h1&gt;</span>
+
+<span class="nt">&lt;router-outlet</span> <span class="nt">/&gt;</span></code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Create the gh-actions workflow file for deploying the frontend.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/ci-deploy-frontend-yaml.png" alt="ci deploy frontend yaml">
+</div>
+<div class="title">Figure 1. github/workflows/deploy-frontend.yaml</div>
+</div>
+<div class="listingblock">
+<div class="title">github/workflows/deploy-backend.yaml</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="yaml"><span class="na">name</span><span class="pi">:</span> <span class="s">Build and Deploy</span>
+
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">push</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">main</span>
+    <span class="na">paths</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">frontend/**'</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">.github/workflows/**'</span>
+  <span class="na">workflow_dispatch</span><span class="pi">:</span>
+
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">build-and-deploy</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Checkout repository</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v4</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Set up Node.js</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/setup-node@v4</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">node-version</span><span class="pi">:</span> <span class="m">22</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+        <span class="na">working-directory</span><span class="pi">:</span> <span class="s">frontend/angular-demo</span>
+
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Build Angular project</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm run build -- --configuration=production</span>
+        <span class="na">working-directory</span><span class="pi">:</span> <span class="s">frontend/angular-demo</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Zip build directory</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="pi">|</span>
+          <span class="s">tar -zcvf ../../../../../dist.tar.gz ./</span>
+        <span class="na">working-directory</span><span class="pi">:</span> <span class="s">frontend/angular-demo/dist/angular-demo/browser</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Copy zip to server via SCP</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">appleboy/scp-action@v1</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">host</span><span class="pi">:</span> <span class="s">${{ secrets.SSH_HOST }}</span>
+          <span class="na">username</span><span class="pi">:</span> <span class="s">${{ secrets.SSH_USER }}</span>
+          <span class="na">key</span><span class="pi">:</span> <span class="s">${{ secrets.SSH_PRIVATE_KEY }}</span>
+          <span class="na">source</span><span class="pi">:</span> <span class="s">dist.tar.gz</span>
+          <span class="na">target</span><span class="pi">:</span> <span class="s">/tmp/</span>
+          <span class="na">strip_components</span><span class="pi">:</span> <span class="m">0</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Unzip on server</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">appleboy/ssh-action@v1</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">host</span><span class="pi">:</span> <span class="s">${{ secrets.SSH_HOST }}</span>
+          <span class="na">username</span><span class="pi">:</span> <span class="s">${{ secrets.SSH_USER }}</span>
+          <span class="na">key</span><span class="pi">:</span> <span class="s">${{ secrets.SSH_PRIVATE_KEY }}</span>
+          <span class="na">script</span><span class="pi">:</span> <span class="pi">|</span>
+            <span class="s">cd /var/www/html/</span>
+            <span class="s">rm -rf *</span>
+            <span class="s">tar -xzf /tmp/dist.tar.gz</span>
+            <span class="s">tar -tf /tmp/dist.tar.gz</span>
+            <span class="s">rm /tmp/dist.tar.gz</span></code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>When there are no errors anymore, the frontend is built and deployed to the server.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/gh-actions-in-repo.png" alt="gh actions in repo">
+</div>
+</div>
+<div class="listingblock">
+<div class="title">vm: ll /var/www/html</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="bash">total 208
+drwxr-xr-x 2 dsadmin dsadmin   4096 Jun  8 16:17 ./
+drwxr-xr-x 3 root    root      4096 Jun 15  2021 ../
+<span class="nt">-rw-r--r--</span> 1 dsadmin dsadmin  15086 Jun  8 16:16 favicon.ico
+<span class="nt">-rw-r--r--</span> 1 dsadmin dsadmin    425 Jun  8 16:17 index.html
+<span class="nt">-rw-r--r--</span> 1 dsadmin dsadmin 183884 Jun  8 16:17 main-DST6WINY.js
+<span class="nt">-rw-r--r--</span> 1 dsadmin dsadmin      0 Jun  8 16:17 styles-5INURTSO.css</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Now the deployment of the frontend is done via GitHub Actions and we can check the server.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/website-with-https.png" alt="website with https">
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.0<br>
+Version 0.0.1<br>
 Last updated 2025-06-08 16:41:50 UTC
 </div>
 </div>
