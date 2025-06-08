@@ -22,7 +22,7 @@ We want to prepare a server with a simple nginx-web-server for accessing its web
 
 == Install passwordless ssh access
 
-* Forst we create a ssh-key-pair for the server, so we can access it via ssh without entering a password.
+* First, we create a ssh-key-pair for the server, so we can access it via ssh without entering a password.
 
 .vm
 [source,bash]
@@ -400,9 +400,7 @@ nano /var/www/html/index.nginx-debian.html
 image::nginx-page.png[]
 
 
-== Install a Reverse Proxy
 
-* work in progress, this will be done later
 
 == Build the gh-pages pipeline
 
@@ -517,8 +515,17 @@ drwxr-xr-x 3 root    root      4096 Jun 15  2021 ../
 ----
 
 
-* Now the deployment of the frontend is done via GitHub Actions and we can check the server.
+* Now the deployment of the frontend is done via GitHub Actions and we can check the server. We see, that the website is served via https and the certificate is valid.
 
 
 image::website-with-https.png[]
+
+== Deploy the Backend
+
+* work in progress, this will be done later
+
+== Install a Reverse Proxy
+
+* work in progress, this will be done later
+
 
