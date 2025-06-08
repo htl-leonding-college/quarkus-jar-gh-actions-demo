@@ -7,3 +7,5 @@
 
 
 - https://htl-leonding-college.github.io/quarkus-jar-gh-actions-demo/create-oravm.html
+- https://htl-leonding-college.github.io/quarkus-jar-gh-actions-demo/nginx-reverse-proxy.html
+- 

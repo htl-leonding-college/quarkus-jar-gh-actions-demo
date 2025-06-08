@@ -1,6 +1,6 @@
 = nginx as Reverse Proxy (work-in-progress)
 Thomas W. Stütz, credits to Mr. Christian Aberger
-0.0.1, {docdate:formatdate("yyyy-MM-dd")}: How to install nginx reverse proxy on a server @ HTL Leonding college
+0.1.0, {docdate}: How to install nginx reverse proxy on a server @ HTL Leonding college
 ifndef::imagesdir[:imagesdir: images]
 //:toc-placement!:  // prevents the generation of the doc at this position, so it can be printed afterwards
 :sourcedir: ../src/main/java
