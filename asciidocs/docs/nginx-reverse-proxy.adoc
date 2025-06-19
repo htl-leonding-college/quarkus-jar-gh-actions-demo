@@ -222,6 +222,36 @@ systemctl status nginx
 systemctl enable nginx
 systemctl restart nginx
 netstat -ant
+
+# Alle aktiven Konfigurationen auflisten
+sudo ls -la /etc/nginx/sites-enabled/
+
+# Inhalt der Konfigurationen prüfen
+sudo grep -r "vmXY.htl-leonding.ac.at" /etc/nginx/sites-enabled/
+
+# Neue Konfiguration aktivieren
+sudo ln -s /etc/nginx/sites-available/pepper-app /etc/nginx/sites-enabled/
+
+# Testen
+sudo nginx -t
+
+# Endpoint aufrufen
+curl -kv https://vmXY.htl-leonding.ac.at:8080/person
+
+# Logs verfolgen
+sudo tail -f /var/log/nginx/api_access.log
+sudo tail -f /var/log/nginx/api_error.log
+
+# Alle aktiven Ports prüfen
+sudo netstat -tlnp | grep -E ':(80|443|4200|8080)'
+
+# Welche Ports sind belegt?
+sudo netstat -tlnp | grep :80
+sudo netstat -tlnp | grep :443
+sudo netstat -tlnp | grep :8080
+
+
+
 ----
 ====
 
@@ -283,18 +313,18 @@ EFF news, campaigns, and ways to support digital freedom.
 (Y)es/(N)o: n   // <.>
 Account registered.
 Please enter the domain name(s) you would like on your certificate (comma and/or
-space separated) (Enter 'c' to cancel): vm141.htl-leonding.ac.at
-Requesting a certificate for vm141.htl-leonding.ac.at
+space separated) (Enter 'c' to cancel): vm761.htl-leonding.ac.at
+Requesting a certificate for vm761.htl-leonding.ac.at
 
 Successfully received certificate.
-Certificate is saved at: /etc/letsencrypt/live/vm141.htl-leonding.ac.at/fullchain.pem
-Key is saved at:         /etc/letsencrypt/live/vm141.htl-leonding.ac.at/privkey.pem
+Certificate is saved at: /etc/letsencrypt/live/vm761.htl-leonding.ac.at/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/vm761.htl-leonding.ac.at/privkey.pem
 This certificate expires on 2025-09-06.
 These files will be updated when the certificate renews.
 Certbot has set up a scheduled task to automatically renew this certificate in the background.
 
 Deploying certificate
-Successfully deployed certificate for vm141.htl-leonding.ac.at to /etc/nginx/sites-enabled/default
+Successfully deployed certificate for vm761.htl-leonding.ac.at to /etc/nginx/sites-enabled/default
 Congratulations! You have successfully enabled HTTPS on https://vm761.htl-leonding.ac.at  // <.>
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
